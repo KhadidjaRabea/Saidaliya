@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.myapplication.Entity.Commande
 import com.example.myapplication.Entity.Pharmacie
 import com.example.myapplication.Entity.User
@@ -15,8 +16,6 @@ import kotlinx.android.synthetic.main.login_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class LoginFragment : Fragment() {
@@ -33,28 +32,41 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var commande = Commande(2,"0558979648",1,"frf", SimpleDateFormat("dd MMM yyyy").format(Date()),"etente")
-        addCommande.setOnClickListener{
+        button.setOnClickListener{
 
-            addCommande(commande)
+            getPharmacie(1)
         }
 
-        updateCommande.setOnClickListener{
-
-            commande.etat = "Prete"
-            updateCommande(commande)
-        }
-
-        deleteCommande.setOnClickListener {
-
-            deleteCommande(commande)
-        }
-
-        commandePharm.setOnClickListener {
-
-            getCommandeParPharmacie(1)
-        }
     }
+
+    private fun loadWrapContent(url : String){
+
+        Glide
+            .with(this)
+            .load(url)
+            .into(image1)
+
+    }
+
+    private fun loadmatchCons(url : String){
+
+        Glide
+            .with(this)
+            .load(url)
+            .into(image2)
+
+
+    }
+
+    private fun loadFixed(url : String){
+
+        Glide
+            .with(this)
+            .load(url)
+            .into(image3)
+
+    }
+
 
 
     // TODO : adapt it to its fragment when copied
@@ -71,7 +83,7 @@ class LoginFragment : Fragment() {
 
                     if (list!!.size >= 1) {
 
-                        nom1.text = list.get(0)?.id.toString()
+        /*                nom1.text = list.get(0)?.id.toString()
                         ville1.text = list.get(0)?.dateEmission
                         if (list.size >= 2 ) {
                             nom2.text = list.get(1)?.id.toString()
@@ -81,7 +93,7 @@ class LoginFragment : Fragment() {
                             nom2.text = "Only one"
                             ville2.text = "Only one"
                         }
-                    }
+          */          }
 
                 } else {
                     Log.d("OnResponse_NOTSuccss",response.toString())
@@ -177,12 +189,18 @@ class LoginFragment : Fragment() {
 
                 if(response?.isSuccessful!!) {
 
+                    Toast.makeText(this@LoginFragment.activity, "From OnResponse Successful", Toast.LENGTH_SHORT).show()
                     val list : List<Pharmacie>? = response.body()
 
                     if (list != null) {
-                        if (list.size == 1){
-                            nom1.text = list.get(0)?.nom
-                            ville1.text = list.get(0)?.ville
+                        if ( ! list.isEmpty()){
+
+                            var url = list.get(0).photo
+
+                            Log.d("Adresse",url)
+                            loadWrapContent(url)
+                            loadmatchCons(url)
+                            loadFixed(url)
                         }
                     }
 
@@ -208,8 +226,8 @@ class LoginFragment : Fragment() {
 
                 if (list != null) {
                     if (list.size == 1){
-                        nom1.text = list.get(0)?.nom
-                        ville1.text = list.get(0)?.ville
+//                        nom1.text = list.get(0)?.nom
+//                        ville1.text = list.get(0)?.ville
                     }
                 }
 
@@ -234,12 +252,12 @@ class LoginFragment : Fragment() {
                     if( response != null){
                         Log.d("OnResponse",response.body().toString())
                     }
-                    val pharmacies: List<Pharmacie>? = response.body()
+             /*       val pharmacies: List<Pharmacie>? = response.body()
                     nom1.text = pharmacies?.get(0)?.nom
                     nom2.text = pharmacies?.get(1)?.nom
                     ville1.text = pharmacies?.get(0)?.ville
                     ville2.text = pharmacies?.get(1)?.ville
-                }
+               */ }
                 else {
 
                     Toast.makeText(this@LoginFragment.activity, "Error !", Toast.LENGTH_SHORT).show()
